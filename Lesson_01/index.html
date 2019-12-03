@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>eShop</title>
+    <link rel="stylesheet" href="reset.css">
+    <style type="text/css">
+        header{
+            padding: 10px;
+            text-align: right;
+            border: 1px solid black;
+        }
+        button{
+            border-radius: 10px;
+            background-color: white;
+            margin: 5px 0;
+        }
+        .goods-btn{
+            float: right;
+            font-size: 12px;
+        }
+        .goods-list {
+            display: flex;
+            flex-flow: row wrap;
+            align-content: space-between;
+            padding: 10px;
+        }
+        .goods-item{
+            flex-basis: 200px;
+            flex-grow: 0;
+            text-align: center;
+            border: 1px solid black;
+            margin: 5px;
+            padding: 10px;
+            height: fit-content;
+        }
+        .goods-img{
+            width: 60%;
+            height: 70%;
+        }
+        h3{
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <button class="cart-button">Корзина</button>
+</header>
+<main>
+    <div class="goods-list"></div>
+</main>
+<script src="index.js"></script>
+</body>
+</html>
