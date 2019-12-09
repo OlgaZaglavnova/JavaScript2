@@ -152,7 +152,7 @@
             height: 50px;
         }
         .chat{
-            width: 25%;
+            width: 30%;
             height: 50%;
             position: fixed;
             right: 20px;
@@ -221,11 +221,21 @@
         }
         .msg-time{
             padding: 5px;
+            margin-right: 10px;
         }
-        .msg-consultant:before{
+        .msg-consultant-before{
+              width: 10px;
+              height: 10px;
+              background-color: lightcyan;
+              transform: rotate(45deg);
+              position: absolute;
+              top: 10px;
+              left: -5px;
+          }
+        .msg-user-before{
             width: 10px;
             height: 10px;
-            background-color: lightcyan;
+            background-color: bisque;
             transform: rotate(45deg);
             position: absolute;
             top: 10px;
@@ -234,6 +244,9 @@
         .msg-text{
             padding: 5px;
             border-radius: 2px;
+            position: relative;
+            width: 60%;
+            word-break: break-word;
         }
         .msg-consultant{
             background-color: lightcyan;

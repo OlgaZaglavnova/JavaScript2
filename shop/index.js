@@ -236,9 +236,9 @@ class ChatMessage{
     render(){
         let msgHTML='';
         if (this.author == 'user') {
-            msgHTML = `<div class="msg-block"><p class="msg-time">${this.time}</p><div class="msg-text msg-user">${this.text}</div></div>`;
+            msgHTML = `<div class="msg-block"><p class="msg-time">${this.time}</p><div class="msg-text msg-user"><div class="msg-user-before"></div>${this.text}</div></div>`;
         } else {
-            msgHTML = `<div class="msg-block"><div class="msg-text msg-consultant">${this.text}</div><p class="msg-time">${this.time}</p></div>`;
+            msgHTML = `<div class="msg-block"><div class="msg-text msg-consultant"><div class="msg-consultant-before"></div>${this.text}</div><p class="msg-time">${this.time}</p></div>`;
         }
         return msgHTML;
     }
@@ -249,6 +249,7 @@ class Chat{
         this.consultant = consultant;
     }
     init(){
+        console.log(document.querySelector('.user-msg').value.type);
         document.querySelector(".consultant-name").innerHTML = this.consultant;
         let fstMsg = new ChatMessage('consultant', 'Здравствуйте! Я могу Вам чем-то помочь?', '');
         this.messages.push(fstMsg);
@@ -265,7 +266,7 @@ class Chat{
         this.setEventCloseChat();
         this.setEventInputMessage();
         let currenttime = new Date;
-        this.messages[0].time = `${currenttime.getHours()}:${currenttime.getMinutes()}`;
+        this.messages[0].time = `${this.getTimeString()}`;
         document.querySelector('.chat-messages').innerHTML = this.messagesHTML();
         document.querySelector(".chat").classList.remove('hidden');
     }
@@ -279,15 +280,27 @@ class Chat{
             elem.target.parentElement.parentElement.classList.add('hidden');
         });
     }
+    getTimeString(){
+        let currentTime = new Date();
+        let hours = `${currentTime.getHours()}`;
+        if (hours.length < 2) {
+            hours = '0' + hours;
+        }
+        let minutes = `${currentTime.getMinutes()}`;
+        if (minutes.length < 2) {
+            minutes = '0' + minutes;
+        }
+        return hours + ':' + minutes;
+    }
     setEventInputMessage(){
         document.querySelector('.user-msg').addEventListener('keypress', event => {
             let key = event.which || event.keyCode;
             if (key == 13){
-                let currentTime = new Date();
-                let MsgObj = new ChatMessage('user', event.target.value, `${currentTime.getHours()}:${currentTime.getMinutes()}`);
+                event.preventDefault();
+                let MsgObj = new ChatMessage('user', event.target.value, `${this.getTimeString()}`);
                 this.messages.push(MsgObj);
                 document.querySelector('.chat-messages').innerHTML = this.messagesHTML();
-                document.querySelector('.user-msg').value = '';
+                document.querySelector('.user-msg').value = "";
             }
         });
     }
