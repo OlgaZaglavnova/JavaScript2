@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>eShop</title>
     <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="chat.css">
     <style>
         .header {
             padding: 10px 20px;
@@ -41,6 +42,7 @@
             background-color: #f1f1f1;
             text-align: center;
             height: fit-content;
+            flex-basis: 200px;
         }
         .title {
             font-size: 18px;
@@ -142,118 +144,6 @@
             border-radius: 1px;
             line-height: 8px;
         }
-        .chat-open{
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-        }
-        .chat-img{
-            width: 50px;
-            height: 50px;
-        }
-        .chat{
-            width: 30%;
-            height: 50%;
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            background-color: gainsboro;
-            border: 1px solid darkgray;
-            padding: 10px;
-            border-radius: 3px;
-            border-top-right-radius: 20px;
-        }
-        .chat-close{
-            width: 20px;
-            height: 20px;
-            font-size: 18px;
-            line-height: 20px;
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            border-radius: 50%;
-            background-color: gray;
-            color: white;
-            text-align: center;
-        }
-        .chat-header{
-            background-color: darkgray;
-            color: white;
-            padding: 10px;
-            border-top-right-radius: 10px;
-        }
-        .consultant-photo{
-            background-image: url("img/iconfinder_user-secret_1608462.png");
-            background-position: center;
-            background-size: contain;
-            background-repeat: no-repeat;
-            width: 30px;
-            height: 30px;
-            display: inline-block;
-            float: left;
-            margin-right: 10px;
-        }
-        .user-message{
-            width: 90%;
-            position: absolute;
-            bottom: 10px;
-        }
-        .user-msg{
-            width: 100%;
-        }
-        .msg-block{
-            width: 90%;
-            display: flex;
-            justify-content: flex-end;
-        }
-        .chat-messages{
-            height: 65%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            overflow-y: scroll;
-            margin: 5px;
-        }
-        .msg-block{
-            display: flex;
-            padding: 5px;
-
-        }
-        .msg-time{
-            padding: 5px;
-            margin-right: 10px;
-        }
-        .msg-consultant-before{
-              width: 10px;
-              height: 10px;
-              background-color: lightcyan;
-              transform: rotate(45deg);
-              position: absolute;
-              top: 10px;
-              left: -5px;
-          }
-        .msg-user-before{
-            width: 10px;
-            height: 10px;
-            background-color: bisque;
-            transform: rotate(45deg);
-            position: absolute;
-            top: 10px;
-            left: -5px;
-        }
-        .msg-text{
-            padding: 5px;
-            border-radius: 2px;
-            position: relative;
-            width: 60%;
-            word-break: break-word;
-        }
-        .msg-consultant{
-            background-color: lightcyan;
-        }
-        .msg-user{
-            background-color: bisque;
-        }
     </style>
 </head>
 <body>
@@ -269,7 +159,10 @@
             <div class="cart-inner"></div>
         </div>
     </div>
-    <a href="#" class="chat-open"><img src="img/iconfinder_chat_1055095.png" alt="chat" class="chat-img"></a>
+    <a href="#" class="chat-open">
+        <!--<img src="img/iconfinder_chat_1055095.png" alt="chat" class="chat-img">-->
+    <div class="chat-closed">Чат</div>
+    </a>
     <div class="chat hidden">
         <a href="#"><div class="chat-close">&#10052;</div></a>
         <div class="chat-header">
@@ -280,6 +173,8 @@
         <div class="chat-messages"></div>
         <div class="user-message">
             <textarea class="user-msg" placeholder="Введите сообщение и нажмите Enter"></textarea>
+            <button class="smiles-btn"></button>
+            <button class="attachfile-btn"></button>
         </div>
     </div>
 </main>

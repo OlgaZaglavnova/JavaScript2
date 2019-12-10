@@ -236,9 +236,9 @@ class ChatMessage{
     render(){
         let msgHTML='';
         if (this.author == 'user') {
-            msgHTML = `<div class="msg-block"><p class="msg-time">${this.time}</p><div class="msg-text msg-user"><div class="msg-user-before"></div>${this.text}</div></div>`;
+            msgHTML = `<div class="msg-block user-block"><p class="msg-time">${this.time}</p><div class="msg-text msg-user"><div class="msg-user-before"></div>${this.text}</div></div>`;
         } else {
-            msgHTML = `<div class="msg-block"><div class="msg-text msg-consultant"><div class="msg-consultant-before"></div>${this.text}</div><p class="msg-time">${this.time}</p></div>`;
+            msgHTML = `<div class="msg-block consultant-block"><div class="msg-text msg-consultant"><div class="msg-consultant-before"></div>${this.text}</div><p class="msg-time">${this.time}</p></div>`;
         }
         return msgHTML;
     }
@@ -299,8 +299,10 @@ class Chat{
                 event.preventDefault();
                 let MsgObj = new ChatMessage('user', event.target.value, `${this.getTimeString()}`);
                 this.messages.push(MsgObj);
-                document.querySelector('.chat-messages').innerHTML = this.messagesHTML();
+                //document.querySelector('.chat-messages').innerHTML = this.messagesHTML();
+                document.querySelector('.chat-messages').insertAdjacentHTML('beforeend', MsgObj.render());
                 document.querySelector('.user-msg').value = "";
+                document.querySelector('.chat-messages').scrollTop = document.querySelector('.chat-messages').scrollHeight;
             }
         });
     }
