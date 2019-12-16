@@ -1,7 +1,7 @@
 //'use strict';
 const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 function makeGETRequest(url) {
-    return new Promise((resolve, reject)=> {
+    return new Promise((resolve, reject) => {
         let xhr;
         if (window.XMLHttpRequest) {
             xhr = new window.XMLHttpRequest();
@@ -12,14 +12,16 @@ function makeGETRequest(url) {
         xhr.onreadystatechange=function(){
             console.log(xhr.readyState);
             console.log(xhr.status);
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                const body = JSON.parse(xhr.responseText);
-                resolve(body);
-            } else if (xhr.readyState === 4 && xhr.status !== 200){
-                reject({error: xhr.status});
+            if (xhr.readyState === 4){
+                if (xhr.status === 200) {
+                    const body = JSON.parse(xhr.responseText);
+                    resolve(body);
+                } else{
+                    reject({error: xhr.status});
+                }
             }
         };
-        //xhr.onerror=(err)=>{reject(err)};
+        xhr.onerror=(err)=>{reject(err)};
         xhr.open('GET', url);
         xhr.send();
         /*  xhr.onreadystatechange = function () {
@@ -57,14 +59,9 @@ class GoodsList {
     }
 
     fetchGoods()  {
-        return new Promise((resolve, reject) => {
-            makeGETRequest(`${API_URL}/catalogData.json`)
-                .then()
-                .then(res => {
-                    this.goods = res;
-                    resolve ()})
-                .catch(err=> reject(err));
-        });
+        return makeGETRequest(`${API_URL}/catalogData.json`)
+                .then((goods) => this.goods = goods)
+                .catch(err => err);
        /* makeGETRequest(`${API_URL}/catalogData.json`)
             .then(this.goods, function(){
             //list.render();
@@ -99,6 +96,11 @@ class GoodsList {
             listHtml += goodItem.render();
         });
         document.querySelector('.goods-list').innerHTML = listHtml;
+        this.countSum();
+        const prodCart = new Cart();
+        this.setEventListeners(prodCart);
+        prodCart.cartBtnSetEvent();
+        prodCart.cartCloseBtnSetEvent();
     }
     countSum(){
         this.goods.forEach(elem => {
@@ -316,6 +318,7 @@ class Chat{
         document.querySelector(".consultant-name").innerHTML = this.consultant;
         let fstMsg = new ChatMessage('consultant', 'Здравствуйте! Я могу Вам чем-то помочь?', '');
         this.messages.push(fstMsg);
+        this.setEventOpenChat();
     }
     messagesHTML(){
         let messagesHTMLcode="";
@@ -374,11 +377,6 @@ const list = new GoodsList();
 list.fetchGoods()
     .then(() => {
         list.render();
-        list.countSum();
-        const prodCart = new Cart();
-        list.setEventListeners(prodCart);
-        prodCart.cartBtnSetEvent();
-        prodCart.cartCloseBtnSetEvent();
     }).catch((err)=>{
         console.log('catch error');
         console.log(err);
@@ -391,7 +389,7 @@ list.fetchGoods()
 
 const chatObj = new Chat('Ольга');
 chatObj.init();
-chatObj.setEventOpenChat();
+
 
 
 
