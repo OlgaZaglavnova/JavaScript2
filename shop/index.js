@@ -1,17 +1,53 @@
+//'use strict';
+const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
+function makeGETRequest(url) {
+    return new Promise((resolve, reject) => {
+        let xhr;
+        if (window.XMLHttpRequest) {
+            xhr = new window.XMLHttpRequest();
+        } else {
+            xhr = new window.ActiveXObject('Microsoft.XMLHTTP');
+        }
+
+        xhr.onreadystatechange=function(){
+            console.log(xhr.readyState);
+            console.log(xhr.status);
+            if (xhr.readyState === 4){
+                if (xhr.status === 200) {
+                    const body = JSON.parse(xhr.responseText);
+                    resolve(body);
+                } else{
+                    reject({error: xhr.status});
+                }
+            }
+        };
+        xhr.onerror=(err)=>{reject(err)};
+        xhr.open('GET', url);
+        xhr.send();
+        /*  xhr.onreadystatechange = function () {
+              if (xhr.readyState === 4 && xhr.status === 200) {
+                  const body = JSON.parse(xhr.responseText);
+                  callback(body)
+              }
+          };*/
+
+});
+}
+
 //Товар на странице
 class GoodsItem {
-    constructor(code = 0, title = 'Без имени', price = '', prodimg = "img/prod1.jpg") {
-        this.code = code;
-        this.title = title;
+    constructor(id_product = 0, product_name = 'Без имени', price = '', prodimg = "img/lesson3_prod.jpg") {
+        this.id_product = id_product;
+        this.product_name = product_name;
         this.price = price;
         this.prodimg = prodimg;
     }
     render() {
         return `<div class="goods-item">
                     <img src=${this.prodimg} class="goods-img">
-                    <h3 class="title goods-title">${this.title}</h3>
+                    <h3 class="title goods-title">${this.product_name}</h3>
                     <p>${this.price} ₽</p>
-                    <button class="goods-btn" id=${this.code}>В корзину</button>
+                    <button class="goods-btn" id=${this.id_product}>В корзину</button>
                 </div>`;
     }
 }
@@ -21,21 +57,50 @@ class GoodsList {
         this.goods = [];
         this.sum = 0;
     }
+
     fetchGoods()  {
-        this.goods = [
+        return makeGETRequest(`${API_URL}/catalogData.json`)
+                .then((goods) => this.goods = goods)
+                .catch(err => err);
+       /* makeGETRequest(`${API_URL}/catalogData.json`)
+            .then(this.goods, function(){
+            //list.render();
+            //return this.goods;
+        }).then(res => {
+                console.log('2nd then (res)');
+                console.log(res);
+                this.goods = res;
+                this.render();
+                this.countSum();
+                const prodCart = new Cart();
+                this.setEventListeners(prodCart);
+                prodCart.cartBtnSetEvent();
+                prodCart.cartCloseBtnSetEvent();
+        }).catch(err=> console.error(err));
+        /*makeGETRequest(`${API_URL}/catalogData.json`, (goods) => {
+            this.goods = goods;
+            cb();
+        });*/
+
+        /*this.goods = [
             { code: 1, title: 'Shirt', price: 150 },
             { code: 2, title: 'Socks', price: 150 },
             { code: 3, title: 'Jacket', price: 150 },
             { code: 4, title: 'Shoes', price: 150 },
-        ];
+        ];*/
     }
     render() {
         let listHtml = '';
         this.goods.forEach(good => {
-            const goodItem = new GoodsItem(good.code, good.title, good.price);
+            const goodItem = new GoodsItem(good.id_product, good.product_name, good.price);
             listHtml += goodItem.render();
         });
         document.querySelector('.goods-list').innerHTML = listHtml;
+        this.countSum();
+        const prodCart = new Cart();
+        this.setEventListeners(prodCart);
+        prodCart.cartBtnSetEvent();
+        prodCart.cartCloseBtnSetEvent();
     }
     countSum(){
         this.goods.forEach(elem => {
@@ -43,10 +108,10 @@ class GoodsList {
         });
         document.querySelector(".totalSum").innerHTML = `Общая сумма: ${this.sum}₽`;
     }
-    searchGood(code){
+    searchGood(id_product){
         let foundGood = {};
         this.goods.forEach(elem => {
-            if (elem.code === code){
+            if (elem.id_product === id_product){
                 foundGood = elem;
             }
         });
@@ -59,7 +124,7 @@ class GoodsList {
             let btnGood = this.searchGood(btnId);
             if (btnGood){
                 btn.addEventListener('click', function(){
-                    cartObj.add2Cart(btnGood);
+                    cartObj.addToCart(btnGood);
                 });
             }
         });
@@ -67,9 +132,9 @@ class GoodsList {
 }
 // Товар в корзине
 class CartItem{
-    constructor(code=0, title = 'Без имени', price = '', prodimg = "img/prod1.jpg", count = 0) {
-        this.code = code;
-        this.title = title;
+    constructor(id_product=0, product_name = 'Без имени', price = '', prodimg = "img/lesson3_prod.jpg", count = 0) {
+        this.id_product = id_product;
+        this.product_name = product_name;
         this.price = price;
         this.prodimg = prodimg;
         this.count = count;
@@ -77,11 +142,11 @@ class CartItem{
     render() {
         //возвращает строку таблицы
         return `<tr><td><img src=${this.prodimg} class="cart-img"></td>
-                    <td><span class="cart-title">${this.title}</span></td>
+                    <td><span class="cart-title">${this.product_name}</span></td>
                     <td><span class="cart-price">${this.price}₽</span></td>
-                    <td><span class="cart-count" id="count${this.code}">${this.count}</span></td>
-                    <td><button class="inc-good" id="inc${this.code}">+</button>
-                        <button class="dec-good" id="dec${this.code}">-</button>
+                    <td><span class="cart-count" id="count${this.id_product}">${this.count}</span></td>
+                    <td><button class="inc-good" id="inc${this.id_product}">+</button>
+                        <button class="dec-good" id="dec${this.id_product}">-</button>
                     </td>
                  </tr>`;
     }
@@ -92,11 +157,11 @@ class Cart{
     constructor() {
         this.goods = [];
     }
-    findGoodPos(code){
+    findGoodPos(id_product){
         // Ищем по артикулу
         let goodIdx = -1;
         this.goods.forEach((item, index) => {
-            if (item.code == code) {
+            if (item.id_product == id_product) {
                 goodIdx = index;
             }
         });
@@ -106,13 +171,13 @@ class Cart{
      * эту функцию будем вызывать при нажатии на кнопку "В корзину"
      * @param item
      */
-    add2Cart(item) {
-        let goodPos = this.findGoodPos(item.code);
+    addToCart(item) {
+        let goodPos = this.findGoodPos(item.id_product);
         if ( goodPos >= 0){
             this.goods[goodPos].count++;
         } else {
             //Тут нужно создать новый объект класса CartItem, копируя свойства соответствующего объекта GoodsItem
-            let cartItem = new CartItem(item.code, item.title, item.price);
+            let cartItem = new CartItem(item.id_product, item.product_name, item.price);
             cartItem.count = 1;
             this.goods.push(cartItem);
         }
@@ -186,7 +251,7 @@ class Cart{
     render() {
         let listHtml = `<table class="cart-table">${this.getCartHeader()}`;
         this.goods.forEach(good => {
-           // const cartItemI = new CartItem(good.title, good.price);
+           // const cartItemI = new CartItem(good.product_name, good.price);
             listHtml += good.render();
         });
         listHtml += `</table>
@@ -253,6 +318,7 @@ class Chat{
         document.querySelector(".consultant-name").innerHTML = this.consultant;
         let fstMsg = new ChatMessage('consultant', 'Здравствуйте! Я могу Вам чем-то помочь?', '');
         this.messages.push(fstMsg);
+        this.setEventOpenChat();
     }
     messagesHTML(){
         let messagesHTMLcode="";
@@ -308,16 +374,24 @@ class Chat{
     }
 }
 const list = new GoodsList();
-list.fetchGoods();
-list.render();
-list.countSum();
+list.fetchGoods()
+    .then(() => {
+        list.render();
+    }).catch((err)=>{
+        console.log('catch error');
+        console.log(err);
+});
+/*list.fetchGoods(()=>{
+    list.render();
+    list.countSum();
+});*/
 
-const prodCart = new Cart();
-list.setEventListeners(prodCart);
-prodCart.cartBtnSetEvent();
-prodCart.cartCloseBtnSetEvent();
 
 const chatObj = new Chat('Ольга');
 chatObj.init();
-chatObj.setEventOpenChat();
+
+
+
+
+
 
