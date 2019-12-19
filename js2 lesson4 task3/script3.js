@@ -8,9 +8,30 @@ class UserData{
         this.textRegExp = /^.*$/gm;
     }
     init() {
+        this.setElemsListeners();
         document.querySelector('.sendBtn').addEventListener('click', elem => {
             elem.preventDefault();
             this.checkAllFields()
+        });
+    }
+    setElemsListeners(){
+        const inputElems = [...document.querySelectorAll('.inputfield')];
+        inputElems.forEach(elem => {
+            elem.addEventListener('input', (ev) => {
+                switch (ev.target.id){
+                    case 'name':
+                        this.testElem('#name', this.nameRegExp, '.nameError');
+                        break;
+                    case 'phone':
+                        this.testElem('#phone', this.phoneRegExp, '.phoneError');
+                        break;
+                    case 'email':
+                        this.testElem('#email', this.emailRegExp, '.emailError');
+                        break;
+                    case 'text':
+                        this.testElem('#text', this.textRegExp, '.textError');
+                }
+            });
         });
     }
     testStrings(inputStr, regexp) {
