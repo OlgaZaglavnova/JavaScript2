@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>JavaScript2 Lesson5</title>
+    <title>JavaScript2 Lesson7-v2</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="chat.css">
 </head>
@@ -16,9 +16,9 @@
         <button class="cart-button" @click="toggleCart">Корзина</button>
     </header>
     <main>
-        <goods-list :goods="filteredGoods" v-if="isQuerySuccess" @add-good-to-cart="addGoodToCart"></goods-list>
+        <goods-list :goods="filteredGoods" v-if="isQuerySuccess" @add-cart="addGoodToCart"></goods-list>
         <query-not-success :queryError = "queryError" v-else></query-not-success>
-        <cart :is-cart-visible="isCartVisible" @hide-cart="toggleCart"></cart>
+        <cart :is-cart-visible="isCartVisible" @hide-cart="toggleCart" @increment-cart="addGoodToCart" @decrement-cart="removeGoodFromCart"></cart>
         <!--<cart :cartGoods="cartGoods"></cart>
 
         <div class="chat-closed" @click="toggleChat">Чат</div>

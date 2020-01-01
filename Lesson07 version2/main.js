@@ -29,27 +29,7 @@ const goodsItem = {
                 </div>`,
     methods:{
         addGoodToCart(good) {
-            let goodPos = this.findGoodPos(good.product_name);
-            if ( goodPos >= 0){
-                cartGoods[goodPos].count++;
-            } else {
-                //Тут нужно создать новый объект класса CartItem, копируя свойства соответствующего объекта GoodsItem
-                const cartItem = Object.assign({}, good, {count: 1});
-                cartGoods.push(cartItem);
-            }
-            this.$emit('add-good-to-cart', good);
-        },
-        findGoodPos(product_name){
-            // Ищем по артикулу
-            let goodIdx = -1;
-            //console.log(product_name);
-            cartGoods.forEach((item, index) => {
-
-                if (item.product_name === product_name) {
-                    goodIdx = index;
-                }
-            });
-            return goodIdx;
+            this.$emit('add-cart', good);
         },
     }
 };
@@ -61,12 +41,12 @@ const goodsList = {
         goodsItem,
     },
     template: `<div class="goods-list" v-if="!isGoodsEmpty">
-                <goods-item v-for="good in goods" :good="good" :key="good.product_name" @add-good-to-cart="addGoodToCart"></goods-item>
+                <goods-item v-for="good in goods" :good="good" :key="good.product_name" @add-cart="addCart"></goods-item>
         </div>
         <div class="goods-not-found" v-else><h2>Нет данных</h2></div>`,
     methods: {
-        addGoodToCart(good){
-           this.$emit('add-good-to-cart', good);
+        addCart(good){
+           this.$emit('add-cart', good);
         }
     },
     computed: {
@@ -79,9 +59,9 @@ const goodsList = {
 const cart = {
     name: 'cart',
     props: ['isCartVisible'],
-   /* data: () =>({
-        cartGoods: [],
-    }),*/
+    data: () =>({
+        cartGoods: cartGoods,
+    }),
     template: `
     <div class="cart-bck" v-if="isCartVisible">
             <div class="cart">
@@ -94,13 +74,13 @@ const cart = {
                         <div class="cart-count bold">Количество</div>
                         <div></div>
                     </div>
-                    <div class="cart-good" v-for="cartgood in cartGoods" :key="cartgood.id_product">
+                    <div class="cart-good" v-for="cartgood in cartGoods" :key="cartgood.product_name">
                         <img :src="cartgood.goodImg" alt="img" class="cart-img">
                         <div class="cart-name">{{cartgood.product_name}}</div>
                         <div class="cart-price">{{cartgood.price}} ₽</div>
                         <div class="cart-count">{{cartgood.count}}</div>
-                        <button class="inc-good" @click="incrementCartGood(cartgood.id_product)">+</button>
-                        <button class="dec-good" @click="decrementCartGood(cartgood.id_product)">-</button>
+                        <button class="inc-good" @click="incrementCartGood(cartgood)">+</button>
+                        <button class="dec-good" @click="decrementCartGood(cartgood)">-</button>
                     </div>
                     <div class="cart-sum bold">ИТОГО: {{cartSumm}} ₽</div>
                 </div>
@@ -111,27 +91,12 @@ const cart = {
         hideCart(){
             this.$emit('hide-cart');
         },
-        incrementCartGood(idProd){
-            this.cartGoods[this.findGoodPos(idProd)].count++;
+        incrementCartGood(good){
+           // this.cartGoods[this.findGoodPos(idProd)].count++;
+            this.$emit('increment-cart', good);
         },
-        decrementCartGood(idProd){
-            const goodPos = this.findGoodPos(idProd);
-            if (this.cartGoods[goodPos].count > 0) {
-                this.cartGoods[goodPos].count--;
-            }
-            if (this.cartGoods[goodPos].count === 0){
-                this.cartGoods.splice(goodPos, 1);
-            }
-        },
-        findGoodPos(id_product){
-            // Ищем по артикулу
-            let goodIdx = -1;
-            this.cartGoods.forEach((item, index) => {
-                if (item.id_product == id_product) {
-                    goodIdx = index;
-                }
-            });
-            return goodIdx;
+        decrementCartGood(good){
+            this.$emit('decrement-cart', good);
         },
     },
     computed:{
@@ -185,8 +150,6 @@ const app = new Vue({
                 }
 
                 xhr.onreadystatechange=function(){
-                    console.log(xhr.readyState);
-                    console.log(xhr.status);
                     if (xhr.readyState === 4){
                         if (xhr.status === 200) {
                             const body = JSON.parse(xhr.responseText);
@@ -202,8 +165,6 @@ const app = new Vue({
             });
         },
         makePOSTRequest(url, data){
-            console.log('makePOSTRequest data:');
-            console.log(data);
             return new Promise((resolve, reject) => {
                 let xhr;
                 if (window.XMLHttpRequest) {
@@ -217,8 +178,6 @@ const app = new Vue({
                         resolve(xhr.responseText);
                     }
                 };
-                //xhr.onerror=(err)=>{reject(err)};
-
                 xhr.open('POST', url);
                 xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
                 xhr.send(data);
@@ -240,13 +199,6 @@ const app = new Vue({
             this.isCartVisible = !this.isCartVisible;
         },
 
-       /* openChat(){
-            this.chatMessages[0].time = this.getTimeString();
-            this.isChatVisible = true;
-        },
-        closeChat(){
-            this.isChatVisible = false;
-        },*/
        toggleChat(){
            this.isChatVisible = !this.isChatVisible;
         },
@@ -265,52 +217,61 @@ const app = new Vue({
         filterGoods(srchL){
            this.filterLine = srchL;
         },
-        addGoodToCart(good){
-          // console.log(good);
-           try{
-               this.makePOSTRequest('/addToCart', JSON.stringify(good));
-           } catch (e){
-               console.error(e);
-           }
+        findGoodPos(product_name){
+            // Ищем по названию
+            let goodIdx = -1;
+            cartGoods.forEach((item, index) => {
+                if (item.product_name === product_name) {
+                    goodIdx = index;
+                }
+            });
+            return goodIdx;
         },
-        removeGoodFromCart(good){
-            // console.log(good);
-            try{
-                this.makePOSTRequest('/removeFromCart', JSON.stringify(good));
-            } catch (e){
-                console.error(e);
+        async addGoodToCart(good){
+            let goodPos = this.findGoodPos(good.product_name);
+            if ( goodPos >= 0){
+                cartGoods[goodPos].count++;
+            } else {
+                //Тут нужно создать новый объект класса CartItem, копируя свойства соответствующего объекта GoodsItem
+                const cartItem = Object.assign({}, good, {count: 1});
+                cartGoods.push(cartItem);
             }
+           await this.makePOSTRequest('/addCart', JSON.stringify(cartGoods));
+           this.addCartState('add', good.product_name, this.getTimeString());
         },
-        getCartGoods(){
-
+        async removeGoodFromCart(good){
+            const goodPos = this.findGoodPos(good.product_name);
+              if (cartGoods[goodPos].count > 1) {
+                  cartGoods[goodPos].count--;
+              }else{
+                  cartGoods.splice(goodPos, 1);
+              };
+                await this.makePOSTRequest('/removeCart', JSON.stringify(cartGoods));
+                this.addCartState('remove', good.product_name, this.getTimeString());
         },
-        addCartState(action, product_name, action_time){
+        async addCartState(action, product_name, action_time){
            let cartState = {action: action,
                             product_name: product_name,
                             time: action_time};
-            try{
-                this.makePOSTRequest('/addStats', JSON.stringify(cartState));
-            } catch (e){
-                console.error(e);
-            }
+            await this.makePOSTRequest('/addStats', JSON.stringify(cartState));
         }
     },
     async mounted(){
-        try {
-            this.goods = await this.makeGETRequest(`/catalog`);
-            this.goods.forEach(good => {good.goodImg = this.goodPicture});
-            console.log(this.goods);
+        Promise.all([this.makeGETRequest(`/catalog`),
+            this.makeGETRequest(`/getCart`)
+        ]).then(([catalogData, cartData])=>{
+            this.goods = catalogData;
+            this.goods.forEach((elem) => {
+                elem.goodImg = this.goodPicture
+            });
+            cartGoods.push(...cartData);
+            console.log(this.goods, cartGoods);
             this.isQuerySuccess = true;
-        } catch (e) {
-            this.isQuerySuccess = false;
-            this.queryError = e.name + ":" + e.message;
-            console.error(e);
-        };
+        }).catch(()=>{
+            this.setError('Товары не найдены');
+        });
     },
     computed:{
-        /*lowerSearchLine(){
-            return this.searchLine.toLowerCase();
-        },*/
         filteredGoods(){
             let filterRegExp;
             this.searcAllRegExp.lastIndex = 0;
