@@ -5,7 +5,7 @@
     <div class="goods-not-found" v-else><h2>Нет данных</h2></div>
 </template>
 <script>
-    import GoodsItem from '@/components/goods-item';
+    import GoodsItem from './goods-item.vue';
     export default {
         name: 'GoodsList',
         components:{

@@ -24,7 +24,7 @@
     </div>
 </template>
 <script>
-    import LocalStorage from '@/services/storage.service';
+    import LocalStorage from '../services/storage.services.js';
     export default {
         name: 'Cart',
         props: ['isCartVisible'],

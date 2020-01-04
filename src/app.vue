@@ -13,11 +13,11 @@
     </div>
 </template>
 <script>
-    import SearchForm from '@/components/search-form';
-    import GoodsList from '@/components/goods-list';
-    import Cart from '@/components/cart';
-    import Chat from '@/components/chat';
-    import LocalStorage from '@/services/storage.service';
+    import SearchForm from './components/search-form.vue';
+    import GoodsList from './components/goods-list.vue';
+    import Cart from './components/cart.vue';
+    import Chat from './components/chat.vue';
+    import LocalStorage from './services/storage.services.js';
 
     export default {
         name: 'app',
