@@ -8,6 +8,7 @@ module.exports = {
         publicPath: '/dist/',
         filename: 'main.js'
     },
+    mode: 'development',
     module: {
         rules: [
           {
@@ -24,12 +25,29 @@ module.exports = {
             test: /\.js$/,
             exclude: /node_modules/,
             use: {
-              loader: "babel-loader"
+              loader: "babel-loader",
+              options: {
+                  presets: ['@babel/preset-env'],
+                  plugins: ["@babel/plugin-proposal-class-properties"]
+              }
             }
-          }
+          },
+          {
+            test: /\.(png|jpe?g|gif|svg)$/i,
+            loader: 'file-loader',
+            options: {
+              name(file) {
+                if (process.env.NODE_ENV === 'development') {
+                  return '[path][name].[ext]';
+                }
+  
+                return '[contenthash].[ext]';
+              },
+            },
+           },
         ]
       },
       plugins: [
-         new VueLoaderPlugin()
+         new VueLoaderPlugin(),
         ]
 }
