@@ -145,11 +145,11 @@
                 await this.makePOSTRequest('/addStats', JSON.stringify(cartState));
             },
             async addUserMessage(newUserMsg){
-                //this.chatMessages = LocalStorage.getItem('chatMessages');
+                this.chatMessages = LocalStorage.getItem('chatMessages');
                 let newMsg = {author: 'user', text: newUserMsg, time: this.getTimeString()};
                 this.chatMessages.push(newMsg);
                 await this.makePOSTRequest('/addChat', JSON.stringify(chatMessages));
-                //LocalStorage.setItem('chatMessages', this.chatMessages);
+                LocalStorage.setItem('chatMessages', this.chatMessages);
             }
         },
         async mounted(){
