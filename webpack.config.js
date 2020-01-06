@@ -27,9 +27,12 @@ module.exports = {
             use: {
               loader: "babel-loader",
               options: {
-                  presets: ['@babel/preset-env', "es2015", "stage-0"],
-                  plugins: ["@babel/plugin-proposal-class-properties", ["@babel/transform-runtime"]]
-              }
+                  presets: ['@babel/preset-env'],
+                  plugins: [["@babel/plugin-proposal-class-properties"], [
+                    "@babel/plugin-transform-runtime",
+                    { "regenerator": true }]
+                ]
+              },
             }
           },
           {
