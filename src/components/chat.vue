@@ -56,6 +56,8 @@
         },
         mounted(){
             this.chatMessages = LocalStorage.getItem('chatMessages');
+            console.log ('Chat:');
+            console.log(this.chatMessages);
         },
     }
 </script>
@@ -121,7 +123,7 @@
         border-top-right-radius: 20px;
     }
     .consultant-photo{
-        background-image: url("./img/iconfinder_user-secret_1608462.svg");
+        background-image: url("../../img/iconfinder_user-secret_1608462.svg");
         background-position: center;
         background-size: contain;
         background-repeat: no-repeat;
@@ -222,7 +224,7 @@
     .smiles-btn{
         width: 15px;
         height: 25px;
-        background-image: url("./img/iconfinder_misc-_smile__1276846.svg");
+        background-image: url("../../img/iconfinder_misc-_smile__1276846.svg");
         background-repeat: no-repeat;
         background-position: center;
         background-size: contain;
@@ -234,7 +236,7 @@
     .attachfile-btn{
         width: 7%;
         height: 25px;
-        background-image: url("./img/iconfinder_clip-save-attach-file_2205233.svg");
+        background-image: url("../../img/iconfinder_clip-save-attach-file_2205233.svg");
         background-repeat: no-repeat;
         background-position: center;
         background-size: contain;

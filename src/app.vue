@@ -161,11 +161,13 @@
                 this.goods.forEach((elem) => {
                     elem.goodImg = this.goodPicture
                 });
+                this.cartGoods = cartData;
                 LocalStorage.setItem('cartGoods', cartData);
                 //cartGoods.push(...cartData);
                 if (chatData.length ===1){
                     chatData[0].time = this.getTimeString();
                 };
+                this.chatMessages = chatData;
                 LocalStorage.setItem('chatMessages', chatData);
                 //chatMessages.push(...chatData);
                 this.isQuerySuccess = true;

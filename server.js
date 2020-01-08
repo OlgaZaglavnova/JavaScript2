@@ -5,7 +5,7 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(express.static('./dist'));
+app.use(express.static('.'));
 app.use(bodyParser.json());
 app.use(cors());
 
