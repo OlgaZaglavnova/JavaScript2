@@ -16,7 +16,7 @@
     "babel-loader": "^8.0.6",
     "cors": "^2.8.5",
     "css-loader": "^3.4.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "node-localstorage": "^2.1.5",
     "node-static": "^0.7.11",
     "vue": "^2.6.11",
